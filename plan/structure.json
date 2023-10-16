@@ -1,0 +1,10 @@
+{
+    "username": [
+        {
+            "email": "email", 
+            "password": "password",
+            "timeSpent": "time", 
+            "timeIdle": "time"
+            }
+        ]
+}
