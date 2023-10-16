@@ -1,2 +1,3 @@
 # TabTracker
- A browser activity tracker
+
+A browser activity tracker.
