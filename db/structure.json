@@ -1,5 +1,8 @@
 {
-    "username": [
+    "_id": {
+        "$oid": "something"
+      },
+    "username (name goes here)": [
         {
             "email": "email", 
             "password": "password",
