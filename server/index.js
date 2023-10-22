@@ -3,8 +3,8 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 
 let db;
-const port = process.env.PORT;
-const dbpass = process.env.DBPASS;
+const port = 5174;
+const dbpass = "78yZkFtFuGmU9jLw";
 const uri = "mongodb+srv://Tab:" + dbpass + "@tabtrackerdb.a7lfbvs.mongodb.net/?retryWrites=true&w=majority";
 
 app.get("/", async (req, res) => {
@@ -13,19 +13,13 @@ app.get("/", async (req, res) => {
   res.render(allUsers);
 })
 
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
+const client = new MongoClient(uri);
 
 async function start() {
   try {
     await client.connect();
     db = client.db();
-    await client.db("users").command({ ping: 1 });
+    await client.db("config").command({ ping: 1 });
     console.log("Connected to MongoDB!");
   } catch (error) {
     console.error(error);
