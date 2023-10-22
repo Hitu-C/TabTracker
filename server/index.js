@@ -22,18 +22,16 @@ const client = new MongoClient(uri, {
 });
 
 async function start() {
-
   try {
     await client.connect();
-    db = client.db()
+    db = client.db();
     await client.db("users").command({ ping: 1 });
     console.log("Connected to MongoDB!");
-  } finally {
-    await client.close();
+  } catch (error) {
+    console.error(error);
   }
-  app.listen(port)
-  console.log("TabTracker Server listening on port " + port + "!")
-
+  app.listen(port);
+  console.log("TabTracker Server listening on port " + port + "!");
 }
 start().catch(console.dir);
 
