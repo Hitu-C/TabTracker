@@ -4,7 +4,7 @@ const app = express();
 
 let db;
 const port = 3200;
-const uri = "mongodb+srv://Tab:78yZkFtFuGmU9jLw@tabtrackerdb.a7lfbvs.mongodb.net/";
+const uri = "";
 
 const client = new MongoClient(uri, {
   serverApi: {
