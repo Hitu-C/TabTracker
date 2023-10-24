@@ -3,29 +3,29 @@ const { MongoClient, ServerApiVersion } = require('mongodb');
 const app = express();
 
 let db;
-const port = 5174;
-const dbpass = "78yZkFtFuGmU9jLw";
-const uri = "mongodb+srv://Tab:" + dbpass + "@tabtrackerdb.a7lfbvs.mongodb.net/?retryWrites=true&w=majority";
+const port = 3200;
+const uri = "mongodb+srv://Tab:78yZkFtFuGmU9jLw@tabtrackerdb.a7lfbvs.mongodb.net/";
 
-app.get("/", async (req, res) => {
-  const allUsers = db.collection("users").find().toArray();
-  console.log(allUsers);
-  res.render(allUsers);
-})
-
-const client = new MongoClient(uri);
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
 
 async function start() {
+
   try {
     await client.connect();
-    db = client.db();
-    await client.db("config").command({ ping: 1 });
+    db = client.db()
+    await client.db().command({ ping: 1 });
     console.log("Connected to MongoDB!");
   } catch (error) {
-    console.error(error);
+    console.error('Error connecting to MongoDB:', error);
   }
-  app.listen(port);
-  console.log("TabTracker Server listening on port " + port + "!");
+  app.listen(port)
+  console.log("TabTracker Server listening on port " + port + "!")
+
 }
 start().catch(console.dir);
-
