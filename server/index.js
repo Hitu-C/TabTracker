@@ -25,7 +25,7 @@ async function start() {
   try {
     await client.connect();
     db = client.db()
-    await client.db("users").command({ ping: 1 });
+    await client.db("tabtracker").command({ ping: 1 });
     console.log("Connected to MongoDB!");
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
