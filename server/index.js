@@ -4,7 +4,8 @@ const app = express();
 
 let db;
 const port = 3200;
-const uri = "";
+const uri = "mongodb://Tab:@ac-9wodkrn-shard-00-00.a7lfbvs.mongodb.net:27017,ac-9wodkrn-shard-00-01.a7lfbvs.mongodb.net:27017,ac-9wodkrn-shard-00-02.a7lfbvs.mongodb.net:27017/?ssl=true&replicaSet=atlas-10su2o-shard-0&authSource=admin&retryWrites=true&w=majority";
+
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -14,12 +15,17 @@ const client = new MongoClient(uri, {
   }
 });
 
+app.get("/api/users", async (req, res) => {
+  const users = client.db("tabtracker").collection('users').find({});
+  res.json(users);
+});
+
 async function start() {
 
   try {
     await client.connect();
     db = client.db()
-    await client.db().command({ ping: 1 });
+    await client.db("users").command({ ping: 1 });
     console.log("Connected to MongoDB!");
   } catch (error) {
     console.error('Error connecting to MongoDB:', error);
