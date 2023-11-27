@@ -1,8 +1,17 @@
 //TODO:
+
+// Server
 // Make api/create check if email is a valid email address by scheme, must have @ and . for domain
 // Print to console for all activity (adding users, getting users, include ip, get/post)
 
-// Make api/create check if adminpass is from me or user
+// Make api/create check if adminpass is from me or user, separate passwords
+
+// Client
+// Implement login, with tokens (id?)
+// After register, automatically log and redirect to dashboard
+// Implement dashboard, get user from token and get the user data and create webpage
+
+
 
 const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
@@ -116,17 +125,11 @@ app.post("/api/create", async (req, res) => {
   try {
     const { username, email, password, ADMINPASSWORD } = req.body;
 
-    // Check if ADMINPASSWORD matches the one in environment variables
     if (ADMINPASSWORD !== process.env.ADMINPASSWORD) {
       return res.status(403).json({ 
         error: "Unauthorized", 
         receivedParams: { username, email, password, ADMINPASSWORD } 
       });
-    }
-
-    const emailRegex = /\S+@\S+\.\S+/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({ error: "Invalid email format" });
     }
 
     const newUser = {

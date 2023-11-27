@@ -1,5 +1,6 @@
 import '../App.css'
 import MenuPanelComponent from '../components/MenuPanelComponent';
+import createUser, {createToken} from '../components/LoginPanelComponent';
 import React, { useState } from 'react';
 
 function Register() {
@@ -19,25 +20,18 @@ function Register() {
     setUsername(e.target.value);
   };
 
-  async function handleRegister () {
+  const handleRegister = async () => {
     // logic for register
     console.log('Username', username);
     console.log('Email: ', email);
     console.log('Password: ', password);
-    await fetch("http://localhost:5174/api/create", {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        username: username,
-        email: email,
-        password: password
-      }),
-    })
-    .then(response => response.json())
-    .then(data => console.log(data))
-    .catch((error) => {
-    console.error('Error:', error);
-});
+    const emailRegex = /\S+@\S+\.\S+/;
+    if (emailRegex.test(email)) {
+      await createUser(username, email, password, "1324")
+    } else {
+      console.log("Invalid email")
+    }
+    
   };
 
   return (
@@ -50,7 +44,7 @@ function Register() {
           <input type="email" value={email} onChange={handleEmailChange} />
         </div>
         <div className="form-group">
-          <label>Email:</label>
+          <label>Username:</label>
           <input type="username" value={username} onChange={handleUsernameChange} />
         </div>
         <div className="form-group">

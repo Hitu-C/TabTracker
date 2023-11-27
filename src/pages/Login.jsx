@@ -14,7 +14,7 @@ function Login() {
     setPassword(e.target.value);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     // logic for register
     console.log('Email: ', email);
     console.log('Password: ', password);
