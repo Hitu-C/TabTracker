@@ -5,6 +5,7 @@ import React, { useState } from 'react';
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -14,12 +15,16 @@ function Register() {
     setPassword(e.target.value);
   };
 
-  const handleRegister = () => {
+  const handleUsernameChange = (e) => {
+    setUsername(e.target.value);
+  };
+
+  async function handleRegister () {
     // logic for register
     console.log('Username', username);
     console.log('Email: ', email);
     console.log('Password: ', password);
-    fetch("http://localhost:5174/api/create", {
+    await fetch("http://localhost:5174/api/create", {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({
@@ -28,6 +33,11 @@ function Register() {
         password: password
       }),
     })
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch((error) => {
+    console.error('Error:', error);
+});
   };
 
   return (
@@ -41,7 +51,7 @@ function Register() {
         </div>
         <div className="form-group">
           <label>Email:</label>
-          <input type="username" value={username} onChange={handleEmailChange} />
+          <input type="username" value={username} onChange={handleUsernameChange} />
         </div>
         <div className="form-group">
           <label>Password:</label>
