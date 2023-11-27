@@ -16,8 +16,18 @@ function Register() {
 
   const handleRegister = () => {
     // logic for register
+    console.log('Username', username);
     console.log('Email: ', email);
     console.log('Password: ', password);
+    fetch("http://localhost:5174/api/create", {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        username: username,
+        email: email,
+        password: password
+      }),
+    })
   };
 
   return (
@@ -28,6 +38,10 @@ function Register() {
         <div className="form-group">
           <label>Email:</label>
           <input type="email" value={email} onChange={handleEmailChange} />
+        </div>
+        <div className="form-group">
+          <label>Email:</label>
+          <input type="username" value={username} onChange={handleEmailChange} />
         </div>
         <div className="form-group">
           <label>Password:</label>
