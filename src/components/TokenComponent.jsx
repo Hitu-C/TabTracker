@@ -1,6 +1,6 @@
 import React from "react";
 
-export default async function createToken(userdata){
+export default async function createToken(username, ADMINPASSWORD){
     // userdata should only be username and ADMINPASSWORD
     try {
         const response = await fetch("http://localhost:5174/api/token/create", {
