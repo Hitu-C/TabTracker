@@ -35,3 +35,7 @@ export async function ValidateTokenComponent(token) {
         return false;
     }
 }
+
+export async function ValidateTokenFromUserComponent(token) {
+    
+}

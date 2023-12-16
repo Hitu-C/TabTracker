@@ -1,7 +1,7 @@
 import '../App.css'
 import MenuPanelComponent from '../components/MenuPanelComponent';
 import LoginPanelComponent from "../components/LoginPanelComponent";
-import createToken, { ValidateTokenComponent } from '../components/TokenComponent';
+import createToken, { ValidateTokenComponent, ValidateTokenFromUserComponent } from '../components/TokenComponent';
 import React, { useState } from 'react';
 
 function Login() {
@@ -20,7 +20,7 @@ function Login() {
     // logic for login
     console.log('Username: ', username);
     console.log('Password: ', password);
-    ValidateTokenComponent(username);
+    console.log(ValidateTokenComponent(username));
   };
 
   return (

@@ -120,11 +120,12 @@ app.post("/api/create", async (req, res) => {
     const newUser = {
       [username]: [
         {
+          token: "",
           email,
           password,
           timeSpent: "0",
           timeIdle: "0",
-          urls: [""],
+          urls: [""]
         },
       ],
     };
@@ -136,45 +137,73 @@ app.post("/api/create", async (req, res) => {
   }
 });
 
-app.post("/api/token/create", (req, res) => {
+app.post("/api/token/create", async (req, res) => {
+
   const { username, ADMINPASSWORD } = req.body;
+
+  if (!username || !ADMINPASSWORD) {
+    return res.status(400).json({ error: 'Missing username or ADMINPASSWORD' });
+  }
   try {
-    if (ADMINPASSWORD == process.env.ADMINPASSWORD) {
-      const createdToken = jwt.sign({ username }, process.env.ADMINPASSWORD);
-      const db = client.db("tabtrackerdb");
-      db.collection("users").updateOne(
-        { username },
-        { $set: { token: createdToken } }
-      );
-      res.json({ token: createdToken });
-    } else {
-      return res.status(403).json({ 
-        error: "Unauthorized", 
-        receivedParams: { username, ADMINPASSWORD } 
-      });
+
+    if (ADMINPASSWORD !== process.env.ADMINPASSWORD) {
+      return res.status(403).json({ error: "Unauthorized" });
+    }
+
+    const jwtSecret = process.env.JWT_SECRET;
+    if (!jwtSecret) {
+      throw new Error('JWT secret not defined in environment');
+    }
+
+    const createdToken = jwt.sign({ username }, jwtSecret, { expiresIn: '1h' });
+
+    const db = client.db("tabtrackerdb");
+    const updateResult = await db.collection("users").updateOne(
+      { [username]: { $exists: true } },
+      { $set: { [`${username}.$.token`]: createdToken } }
+    );
+
+    if (updateResult.matchedCount === 0) {
+      return res.status(404).json({ error: "User not found" });
     }
   } catch (error) {
     console.error('Error creating token:', error);
-    res.status(500).json({ error: error.toString() });
+    res.status(500).json({ error: error.message });
   }
+
 });
 
-app.post("/api/token/validate", (req, res) => {
+app.post("/api/token/validate", async (req, res) => {
   const { token } = req.body;
+  console.log(token);
+
+  if (!token) {
+    return res.status(400).json({ error: 'Token not provided' });
+  }
   try {
-    const decodedToken = jwt.verify(token, process.env.ADMINPASSWORD);
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+
     const { username } = decodedToken;
 
     const db = client.db("tabtrackerdb");
-    const user = db.collection("users").findOne({ username });
+    // Find a user where the username key exists and the token matches
+    const user = await db.collection("users").findOne({
+      [username]: { $elemMatch: { token: token } }
+    });
     if (user) {
-      res.json(user);
+      res.json({ username, valid: true });
     } else {
-      res.json(false);
+      res.status(404).json({ error: 'User not found or token invalid' });
     }
   } catch (error) {
     console.error('Error validating token:', error);
-    res.json(false);
+    if (error instanceof jwt.JsonWebTokenError) {
+      return res.status(401).json({ error: 'Invalid token' });
+    } else if (error instanceof jwt.TokenExpiredError) {
+      return res.status(401).json({ error: 'Token expired' });
+    } else {
+      return res.status(500).json({ error: 'Internal server error' });
+    }
   }
 });
 

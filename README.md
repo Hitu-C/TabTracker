@@ -19,3 +19,5 @@ A browser activity tracker.
 - [ ] Make api/create check if email is a valid email address by scheme, must have @ and . for domain
 - [ ] Print to console for all activity (adding users, getting users, include ip, get/post)
 - [ ] Make api/create check if adminpass is from me or user, separate passwords
+- [ ] Delete users
+- [ ] No duplicate usernames/emails

@@ -4,12 +4,12 @@
       },
     "username (name goes here)": [
         {
-            "email": "email", 
+            "token": "token",
+            "email": "email",
             "password": "password",
             "timeSpent": "time", 
             "timeIdle": "time",
-            "urls": ["url"],
-            "token": "token"
+            "urls": ["url"]
             }
         ]
 }
