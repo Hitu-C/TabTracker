@@ -1,20 +1,6 @@
-//TODO:
-
-// Server
-// Make api/create check if email is a valid email address by scheme, must have @ and . for domain
-// Print to console for all activity (adding users, getting users, include ip, get/post)
-
-// Make api/create check if adminpass is from me or user, separate passwords
-
-// Client
-// Implement login, with tokens (id?)
-// After register, automatically log and redirect to dashboard
-// Implement dashboard, get user from token and get the user data and create webpage
-
-
-
 const express = require('express');
 const { MongoClient, ServerApiVersion } = require('mongodb');
+const jwt = require("jsonwebtoken");
 const app = express();
 require('dotenv').config();
 const cors = require('cors');
@@ -24,7 +10,6 @@ app.use(express.json());
 
 const port = process.env.PORT;
 const uri = "mongodb://Tab:" + process.env.DBPASS + "@ac-9wodkrn-shard-00-00.a7lfbvs.mongodb.net:27017,ac-9wodkrn-shard-00-01.a7lfbvs.mongodb.net:27017,ac-9wodkrn-shard-00-02.a7lfbvs.mongodb.net:27017/?ssl=true&replicaSet=atlas-10su2o-shard-0&authSource=admin&retryWrites=true&w=majority";
-
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -40,12 +25,12 @@ app.get("/api/users", async (req, res) => {
     if (usersCursor) {
       const users = await usersCursor.toArray();
       
-      let html = '<table><tr><th>Username</th><th>Email</th><th>Password</th><th>Time Spent</th><th>Time Idle</th><th>URLs</th></tr>';
+      let html = '<table><tr><th>Username</th><th>Email</th><th>Password</th><th>Time Spent</th><th>Time Idle</th><th>URLs</th><th>Token</th></tr>';
       users.forEach(user => {
         const username = Object.keys(user)[1];
         const userData = user[username][0];
         const urls = userData.urls ? userData.urls.join(', ') : ''; // checks if urls have a value
-        html += `<tr><td>${username}</td><td>${userData.email}</td><td>${userData.password}</td><td>${userData.timeSpent}</td><td>${userData.timeIdle}</td><td>${urls}</td></tr>`;
+        html += `<tr><td>${username}</td><td>${userData.email}</td><td>${userData.password}</td><td>${userData.timeSpent}</td><td>${userData.timeIdle}</td><td>${urls}</td><td>${userData.token}</td></tr>`;
       });
       html += '</table>';
 
@@ -148,6 +133,48 @@ app.post("/api/create", async (req, res) => {
   } catch (error) {
     console.error('Error creating user:', error);
     res.status(500).json({ Error: error.toString() });
+  }
+});
+
+app.post("/api/token/create", (req, res) => {
+  const { username, ADMINPASSWORD } = req.body;
+  try {
+    if (ADMINPASSWORD == process.env.ADMINPASSWORD) {
+      const createdToken = jwt.sign({ username }, process.env.ADMINPASSWORD);
+      const db = client.db("tabtrackerdb");
+      db.collection("users").updateOne(
+        { username },
+        { $set: { token: createdToken } }
+      );
+      res.json({ token: createdToken });
+    } else {
+      return res.status(403).json({ 
+        error: "Unauthorized", 
+        receivedParams: { username, ADMINPASSWORD } 
+      });
+    }
+  } catch (error) {
+    console.error('Error creating token:', error);
+    res.status(500).json({ error: error.toString() });
+  }
+});
+
+app.post("/api/token/validate", (req, res) => {
+  const { token } = req.body;
+  try {
+    const decodedToken = jwt.verify(token, process.env.ADMINPASSWORD);
+    const { username } = decodedToken;
+
+    const db = client.db("tabtrackerdb");
+    const user = db.collection("users").findOne({ username });
+    if (user) {
+      res.json(user);
+    } else {
+      res.json(false);
+    }
+  } catch (error) {
+    console.error('Error validating token:', error);
+    res.json(false);
   }
 });
 

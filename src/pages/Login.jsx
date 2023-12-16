@@ -1,13 +1,15 @@
 import '../App.css'
 import MenuPanelComponent from '../components/MenuPanelComponent';
+import LoginPanelComponent from "../components/LoginPanelComponent";
+import createToken, { ValidateTokenComponent } from '../components/TokenComponent';
 import React, { useState } from 'react';
 
 function Login() {
-  const [email, setEmail] = useState('');
+  const [username, setusername] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleEmailChange = (e) => {
-    setEmail(e.target.value);
+  const handleUsernameChange = (e) => {
+    setusername(e.target.value);
   };
 
   const handlePasswordChange = (e) => {
@@ -15,9 +17,10 @@ function Login() {
   };
 
   const handleLogin = async () => {
-    // logic for register
-    console.log('Email: ', email);
+    // logic for login
+    console.log('Username: ', username);
     console.log('Password: ', password);
+    ValidateTokenComponent(username);
   };
 
   return (
@@ -26,8 +29,8 @@ function Login() {
       <h2>Login</h2>
       <form>
         <div className="form-group">
-          <label>Email:</label>
-          <input type="email" value={email} onChange={handleEmailChange} />
+          <label>Username:</label>
+          <input type="username" value={username} onChange={handleUsernameChange} />
         </div>
         <div className="form-group">
           <label>Password:</label>

@@ -23,8 +23,8 @@ export default async function createUser(username, email, password, adminPasswor
         // Handle error here
         return error;
     }
-    }
+}
 
-export async function createToken(){
+export async function tokenLogin(token){
 
 }

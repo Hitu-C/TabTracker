@@ -1,12 +1,14 @@
 import '../App.css'
 import MenuPanelComponent from '../components/MenuPanelComponent';
-import createUser, {createToken} from '../components/LoginPanelComponent';
+import createUser from '../components/LoginPanelComponent';
+import createToken, { ValidateTokenComponent } from '../components/TokenComponent';
 import React, { useState } from 'react';
 
 function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const ADMINPASSWORD = "1324"
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -27,9 +29,11 @@ function Register() {
     console.log('Password: ', password);
     const emailRegex = /\S+@\S+\.\S+/;
     if (emailRegex.test(email)) {
-      await createUser(username, email, password, "1324")
+      await createUser(username, email, password, ADMINPASSWORD);
+      await createToken(username, ADMINPASSWORD)
+
     } else {
-      console.log("Invalid email")
+      console.log("Invalid email");
     }
     
   };
